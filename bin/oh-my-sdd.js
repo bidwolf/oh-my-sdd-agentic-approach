@@ -18,23 +18,25 @@ const commands = {
   hook: () => import('../lib/commands/hook.js'),
   report: () => import('../lib/commands/report.js'),
   export: () => import('../lib/commands/export.js'),
+  ecosystem: () => import('../lib/commands/ecosystem.js'),
 };
 
 if (!command || command === '--help' || command === '-h') {
   console.log(`
   ${chalk.bold('oh-my-sdd')} v${pkg.version}
-  Spec-Driven Development, enforced by a global orchestrator + 5 Claude Code skills.
+  Spec-Driven Development, enforced by a global orchestrator + 6 Claude Code skills.
 
   Uso: npx oh-my-sdd <comando>
 
   Comandos:
-    install      Instala as 6 skills oh-my-sdd globalmente em ~/.claude/skills/
+    install      Instala as 7 skills oh-my-sdd globalmente em ~/.claude/skills/
     status       Mostra o estado atual da instalação
-    uninstall    Remove as 6 skills oh-my-sdd de ~/.claude/skills/
+    uninstall    Remove as 7 skills oh-my-sdd de ~/.claude/skills/
     sensor       Verificações executáveis: sensor init | run <slug> | status <slug>
     hook         Hooks de sessão: hook install | uninstall | dispatch
     report       Portfólio das features SDD do projeto (fase, progresso, pendências)
     export       Exporta as regras SDD para outra ferramenta: export cursor|codex|gemini|windsurf|zed
+    ecosystem    Specs atreladas a issues: ecosystem init github|gitlab (template de CI + config)
 
   Documentação: https://github.com/slpascoal/oh-my-sdd
   `);

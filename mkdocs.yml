@@ -1,5 +1,5 @@
 site_name: oh-my-sdd
-site_description: Spec-Driven Development, enforced by a global orchestrator + 5 Claude Code skills.
+site_description: Spec-Driven Development, enforced by a global orchestrator + 6 Claude Code skills.
 site_url: https://slpascoal.github.io/oh-my-sdd/
 repo_url: https://github.com/slpascoal/oh-my-sdd
 repo_name: slpascoal/oh-my-sdd
@@ -75,4 +75,5 @@ nav:
       - Writing an Effective Constitution: concepts/constitution-best-practices.md
       - Practical Constitution Example: concepts/constitution-example.md
   - CLI Reference: cli.md
+  - Ecosystem (issues): ecosystem.md
   - Safety & Data: safety.md

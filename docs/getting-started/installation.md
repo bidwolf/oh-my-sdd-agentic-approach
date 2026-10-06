@@ -13,7 +13,7 @@ npx oh-my-sdd install
 
 This is a **true global install** — it always writes to `~/.claude/skills/`, regardless of which directory you run the command from. You only need to run it once per machine.
 
-Running it installs 6 skills:
+Running it installs 7 skills:
 
 | Skill | Folder |
 |---|---|
@@ -23,6 +23,7 @@ Running it installs 6 skills:
 | `oh-my-sdd-plan` | `~/.claude/skills/oh-my-sdd-plan/` |
 | `oh-my-sdd-tasks` | `~/.claude/skills/oh-my-sdd-tasks/` |
 | `oh-my-sdd-implement` | `~/.claude/skills/oh-my-sdd-implement/` |
+| `oh-my-sdd-ecosystem` | `~/.claude/skills/oh-my-sdd-ecosystem/` |
 
 Each folder also gets its own copy of the [SDD knowledge base](../concepts/what-is-sdd.md), so every skill is self-contained.
 
@@ -34,7 +35,7 @@ If the skills are already installed, the CLI asks whether you want to reinstall/
 npx oh-my-sdd status
 ```
 
-This reports which of the 6 skills are present, and whether any installed file was modified manually since installation (using a SHA-256 manifest stored at `~/.claude/skills/.oh-my-sdd-manifest.json`).
+This reports which of the 7 skills are present, and whether any installed file was modified manually since installation (using a SHA-256 manifest stored at `~/.claude/skills/.oh-my-sdd-manifest.json`).
 
 ## Uninstall
 
@@ -42,7 +43,7 @@ This reports which of the 6 skills are present, and whether any installed file w
 npx oh-my-sdd uninstall
 ```
 
-Removes all 6 skill folders and the manifest file. Nothing else on your machine is touched — see [Safety & Data](../safety.md).
+Removes all 7 skill folders and the manifest file. Nothing else on your machine is touched — see [Safety & Data](../safety.md).
 
 ## Optional: session hooks
 

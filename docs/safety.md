@@ -4,7 +4,7 @@
 
 ## What the installer touches
 
-- **`~/.claude/skills/oh-my-sdd*/`** — the 6 skill folders it installs, plus `~/.claude/skills/.oh-my-sdd-manifest.json` (an integrity manifest). Nothing else in `~/.claude/skills/` is modified.
+- **`~/.claude/skills/oh-my-sdd*/`** — the 7 skill folders it installs, plus `~/.claude/skills/.oh-my-sdd-manifest.json` (an integrity manifest). Nothing else in `~/.claude/skills/` is modified.
 - That's it. The installer never touches your global `~/.claude/CLAUDE.md`, your project's `CLAUDE.md`, or any other Claude Code configuration.
 
 ## What the skills touch, once you run a task
@@ -30,6 +30,6 @@ No implementation code is written before checkpoint #2 is confirmed.
 npx oh-my-sdd uninstall
 ```
 
-removes every file the installer created. Nothing is left behind outside the 6 skill folders and the manifest.
+removes every file the installer created. Nothing is left behind outside the 7 skill folders and the manifest.
 
 Because specs and the constitution live inside your project under `.oh-my-sdd/`, they're plain files under your own version control — delete the folder, or `git revert`, and you're back to where you started.

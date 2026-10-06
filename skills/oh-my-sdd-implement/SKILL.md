@@ -1,7 +1,7 @@
 ---
 name: oh-my-sdd-implement
 description: Implementa uma feature seguindo estritamente tasks.md e as restrições de constitution.md, marcando o progresso em tasks.md e reportando os critérios de aceite de spec.md atendidos. Só deve ser ativada depois que os checkpoints humanos de oh-my-sdd-specify e oh-my-sdd-tasks tiverem sido confirmados. Geralmente invocada pela skill oh-my-sdd.
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Skill
 ---
 
 # When to use this skill
@@ -14,7 +14,7 @@ Use depois que `spec.md`, `plan.md` e `tasks.md` de uma feature já foram valida
 
 # How to use this skill
 
-O argumento é o **slug da feature** — deve corresponder a uma pasta `.oh-my-sdd/specs/<slug>/` com `spec.md`, `plan.md` e `tasks.md` já validados. O orquestrador também pode ativar esta skill em **modo QUICK**, passando um mini-spec inline (sem pasta `specs/<slug>/`).
+O argumento é o **slug da feature** — deve corresponder a uma pasta `.oh-my-sdd/specs/<slug>/` com `spec.md`, `plan.md` e `tasks.md` já validados. O orquestrador também pode ativar esta skill em **modo QUICK**, passando um mini-spec inline (sem pasta `specs/<slug>/`), e passa `channel=terminal|issue` (padrão `terminal`).
 
 > [!IMPORTANT]
 > - Não introduza requisitos, bibliotecas ou decisões arquiteturais que não constem em `spec.md`/`plan.md`. Se notar necessidade de desviar do especificado, **pare e avise o usuário** em vez de decidir silenciosamente.
@@ -26,6 +26,7 @@ O argumento é o **slug da feature** — deve corresponder a uma pasta `.oh-my-s
 > [!IMPORTANT]
 > - **Modo QUICK (mini-spec inline):** não há `specs/<slug>/` nem `tasks.md` — o escopo é o mini-spec recebido. Implemente respeitando `constitution.md`; derive um pseudo-slug do título para sensors. O gate de evidência (Fase 3) roda **somente se** `.oh-my-sdd/config/sensors.json` existir.
 > - **Escape de escala:** se durante a implementação a tarefa exceder o escopo previsto (mais arquivos, mais decisões de design, escopo do mini-spec/tasks insuficiente), **pare imediatamente**, explique ao usuário que a tarefa excedeu a escala prevista e aguarde reclassificação pelo orquestrador — **nunca** cresça silenciosamente dentro de QUICK.
+> - **Canal issue (`channel=issue`):** o fluxo é o mesmo, no branch da feature (`<branchPrefix>/<slug>`). No início, ative `oh-my-sdd-ecosystem` em modo `publish` com fase `implementing` (um único comentário, N/M). Pausas por conflito ou escape de escala também são publicadas na issue (mesma fase, com o motivo) e encerram o turno. `runtime/sessions/` pode não existir entre turnos: reconstrua sempre a partir dos checkboxes de `tasks.md`.
 
 ## Phase 1 — Ler Contexto e Detectar Retomada
 
@@ -71,3 +72,4 @@ Ao concluir todas as tarefas (ou ao pausar por um conflito), **antes de qualquer
    2. Critérios de aceite **atendidos com evidência** (sensor + resultado) — comparando o código gerado contra cada item do checklist, no espírito do loop de validação descrito em `knowledge/2-goal-of-sdd.md` (*"AI agents can compare the code they generate directly against the acceptance criteria listed in the specification"*).
    3. Critérios **pendentes de verificação** (sem evidência) — explícitos, nunca silenciados.
 5. Se um critério for verificável manualmente, registre a nota em `.oh-my-sdd/runtime/sensors/<slug>/manual-checks.md` (formato: `- [ ] <critério> — verificado manualmente, <data>`); só critérios com nota registrada podem ser reportados como atendidos sem sensor.
+6. **Canal issue:** publique esse mesmo relatório via `oh-my-sdd-ecosystem` em modo `publish` com fase `done` — ela faz o commit final no branch, tira o PR/MR do rascunho e troca a label. Critérios pendentes de verificação aparecem explicitamente no comentário, nunca silenciados. Se o gate bloqueou, publique a saída do sensor com fase `implementing` em vez de `done`.

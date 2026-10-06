@@ -1,6 +1,6 @@
 # Referência da CLI
 
-O `oh-my-sdd` traz uma CLI pequena, invocada via `npx`, que gerencia a instalação global das 6 skills.
+O `oh-my-sdd` traz uma CLI pequena, invocada via `npx`, que gerencia a instalação global das 7 skills.
 
 ## `install`
 
@@ -8,7 +8,7 @@ O `oh-my-sdd` traz uma CLI pequena, invocada via `npx`, que gerencia a instalaç
 npx oh-my-sdd install
 ```
 
-Instala (ou reinstala) as 6 skills em `~/.claude/skills/`, junto com uma cópia da base de conhecimento dentro de cada uma, e grava um manifest de integridade em `~/.claude/skills/.oh-my-sdd-manifest.json`. Se as skills já estiverem instaladas, pede confirmação antes de reinstalar.
+Instala (ou reinstala) as 7 skills em `~/.claude/skills/`, junto com uma cópia da base de conhecimento dentro de cada uma, e grava um manifest de integridade em `~/.claude/skills/.oh-my-sdd-manifest.json`. Se as skills já estiverem instaladas, pede confirmação antes de reinstalar.
 
 ## `status`
 
@@ -19,7 +19,7 @@ npx oh-my-sdd status
 Reporta:
 
 - Se o `oh-my-sdd` está instalado, e a versão do pacote instalada.
-- Quais das 6 skills estão presentes (`✓`) ou ausentes (`✗`).
+- Quais das 7 skills estão presentes (`✓`) ou ausentes (`✗`).
 - Se algum arquivo instalado foi modificado manualmente desde a instalação (comparado contra o manifest SHA-256) — apenas informativo, nada é sobrescrito.
 
 ## `uninstall`
@@ -28,7 +28,7 @@ Reporta:
 npx oh-my-sdd uninstall
 ```
 
-Pede confirmação, depois remove as 6 pastas de skill de `~/.claude/skills/` e o arquivo de manifest. Veja [Segurança e Dados](safety.md) para saber exatamente o que isso toca e o que não toca.
+Pede confirmação, depois remove as 7 pastas de skill de `~/.claude/skills/` e o arquivo de manifest. Veja [Segurança e Dados](safety.md) para saber exatamente o que isso toca e o que não toca.
 
 ## `sensor`
 
@@ -74,7 +74,7 @@ A skill `oh-my-sdd-implement` só pode reportar um critério de aceite como aten
 npx oh-my-sdd report [--json]
 ```
 
-Tabela de portfólio de todas as features SDD do projeto atual: slug, fase atual, progresso de tarefas (`N/M`) e critérios de aceite pendentes. Prioridade de derivação de fase: session ativa em runtime > checkboxes de `tasks.md` > presença de artefatos. Com `--json`, emite array estável de `{slug, phase, tasks_done, tasks_total, pending_criteria}` (schema documentado; breaking change = major). Read-only — em projeto sem `.oh-my-sdd/`, mensagem amigável e exit 0.
+Tabela de portfólio de todas as features SDD do projeto atual: slug, fase atual, progresso de tarefas (`N/M`), issue vinculada (`#n` a partir de `specs/<slug>/issue.json`, `—` caso contrário) e critérios de aceite pendentes. Prioridade de derivação de fase: session ativa em runtime > checkboxes de `tasks.md` > presença de artefatos. Com `--json`, emite array estável de `{slug, phase, tasks_done, tasks_total, pending_criteria, issue}` (`issue` é a URL ou `null`; schema documentado; breaking change = major). Read-only — em projeto sem `.oh-my-sdd/`, mensagem amigável e exit 0.
 
 ## `export`
 
@@ -83,3 +83,13 @@ npx oh-my-sdd export <tool>
 ```
 
 Grava as regras SDD destiladas (pipeline, checkpoints bloqueantes, layout `.oh-my-sdd/`, regra de evidência) na superfície de regras de outra ferramenta de IA: `cursor` (`.cursor/rules/oh-my-sdd.mdc`), `windsurf` (`.windsurf/rules/oh-my-sdd.md`), `zed` (`.zed/rules/oh-my-sdd.md`), `codex` (seção marcada em `AGENTS.md`), `gemini` (seção marcada em `GEMINI.md`). Superfícies own-file são arquivos nossos (sobrescrita segura); superfícies de seção fazem merge idempotente entre marcadores `<!-- oh-my-sdd:start|end -->`, preservando conteúdo de terceiros. Ferramenta não suportada: lista suportadas e exit 1. Conteúdo exportado é tool-agnostic — sem precondição de cliente.
+
+## `ecosystem`
+
+```bash
+npx oh-my-sdd ecosystem init <github | gitlab> [--yes] [--force]
+```
+
+Configura o [canal por issue](ecosystem.md): escreve o template de CI que ativa o fluxo SDD quando o agente é mencionado (ou a label `sdd:specify` aplicada) em uma issue — `.github/workflows/oh-my-sdd.yml` no GitHub (claude-code-action), `.gitlab/oh-my-sdd.gitlab-ci.yml` no GitLab (include + webhook → pipeline trigger, instruções impressas) — e `.oh-my-sdd/config/ecosystem.json` (`handle`, `labelPrefix`, `branchPrefix`, `approval`, `openDraftPR`, hashes dos templates).
+
+Pergunta antes de escrever fora de `.oh-my-sdd/` (`--yes` pula; sem TTY e sem `--yes`, nada é gravado). Rodar de novo com template inalterado imprime "já registrado"; template editado manualmente é preservado a menos que você confirme ou passe `--force`. Templates referenciam segredos só por nome. O comando em si nunca acessa a rede. Provider não suportado: lista suportados e exit 1.

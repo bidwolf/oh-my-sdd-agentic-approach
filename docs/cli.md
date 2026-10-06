@@ -1,6 +1,6 @@
 # CLI Reference
 
-`oh-my-sdd` ships a small CLI, invoked via `npx`, that manages the global installation of the 6 skills.
+`oh-my-sdd` ships a small CLI, invoked via `npx`, that manages the global installation of the 7 skills.
 
 ## `install`
 
@@ -8,7 +8,7 @@
 npx oh-my-sdd install
 ```
 
-Installs (or reinstalls) all 6 skills into `~/.claude/skills/`, along with a copy of the knowledge base inside each one, and writes an integrity manifest at `~/.claude/skills/.oh-my-sdd-manifest.json`. If the skills are already installed, asks for confirmation before reinstalling.
+Installs (or reinstalls) all 7 skills into `~/.claude/skills/`, along with a copy of the knowledge base inside each one, and writes an integrity manifest at `~/.claude/skills/.oh-my-sdd-manifest.json`. If the skills are already installed, asks for confirmation before reinstalling.
 
 ## `status`
 
@@ -19,7 +19,7 @@ npx oh-my-sdd status
 Reports:
 
 - Whether `oh-my-sdd` is installed, and the installed package version.
-- Which of the 6 skills are present (`✓`) or missing (`✗`).
+- Which of the 7 skills are present (`✓`) or missing (`✗`).
 - Whether any installed file was modified manually since installation (compared against the SHA-256 manifest) — informational only, nothing is overwritten.
 
 ## `uninstall`
@@ -28,7 +28,7 @@ Reports:
 npx oh-my-sdd uninstall
 ```
 
-Asks for confirmation, then removes all 6 skill folders from `~/.claude/skills/` and the manifest file. See [Safety & Data](safety.md) for exactly what this does and doesn't touch.
+Asks for confirmation, then removes all 7 skill folders from `~/.claude/skills/` and the manifest file. See [Safety & Data](safety.md) for exactly what this does and doesn't touch.
 
 ## `sensor`
 
@@ -74,7 +74,7 @@ The `oh-my-sdd-implement` skill may only report an acceptance criterion as met w
 npx oh-my-sdd report [--json]
 ```
 
-Portfolio table of all SDD features in the current project: slug, current phase, task progress (`N/M`) and pending acceptance criteria. Phase derivation priority: active runtime session > `tasks.md` checkboxes > artifact presence. With `--json`, emits a stable array of `{slug, phase, tasks_done, tasks_total, pending_criteria}` (documented schema; breaking changes bump the major version). Read-only — in a project without `.oh-my-sdd/`, prints a friendly message and exits 0.
+Portfolio table of all SDD features in the current project: slug, current phase, task progress (`N/M`), linked issue (`#n` from `specs/<slug>/issue.json`, `—` otherwise) and pending acceptance criteria. Phase derivation priority: active runtime session > `tasks.md` checkboxes > artifact presence. With `--json`, emits a stable array of `{slug, phase, tasks_done, tasks_total, pending_criteria, issue}` (`issue` is the URL or `null`; documented schema; breaking changes bump the major version). Read-only — in a project without `.oh-my-sdd/`, prints a friendly message and exits 0.
 
 ## `export`
 
@@ -83,3 +83,13 @@ npx oh-my-sdd export <tool>
 ```
 
 Writes the distilled SDD rules (pipeline, blocking checkpoints, `.oh-my-sdd/` layout, evidence rule) to another AI tool's rule surface: `cursor` (`.cursor/rules/oh-my-sdd.mdc`), `windsurf` (`.windsurf/rules/oh-my-sdd.md`), `zed` (`.zed/rules/oh-my-sdd.md`), `codex` (marked section in `AGENTS.md`), `gemini` (marked section in `GEMINI.md`). File-kind surfaces are owned files (safe overwrite); section-kind surfaces merge idempotently between `<!-- oh-my-sdd:start|end -->` markers, preserving third-party content. Unsupported tool prints the supported list and exits 1. Exported content is tool-agnostic — no client preconditions.
+
+## `ecosystem`
+
+```bash
+npx oh-my-sdd ecosystem init <github | gitlab> [--yes] [--force]
+```
+
+Sets up the [issue-driven channel](ecosystem.md): writes the CI template that activates the SDD flow when the agent is mentioned (or the `sdd:specify` label applied) on an issue — `.github/workflows/oh-my-sdd.yml` for GitHub (claude-code-action), `.gitlab/oh-my-sdd.gitlab-ci.yml` for GitLab (include + webhook → pipeline trigger, instructions printed) — and `.oh-my-sdd/config/ecosystem.json` (`handle`, `labelPrefix`, `branchPrefix`, `approval`, `openDraftPR`, template hashes).
+
+Asks before writing outside `.oh-my-sdd/` (`--yes` skips; non-TTY without `--yes` writes nothing). Re-running with an unchanged template prints "já registrado"; a manually edited template is preserved unless you confirm or pass `--force`. Templates reference secrets by name only. The command itself never touches the network. Unsupported provider: prints the supported list and exits 1.
