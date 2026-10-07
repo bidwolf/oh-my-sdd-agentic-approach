@@ -1,0 +1,11 @@
+{
+  "handle": "@claude",
+  "labelPrefix": "sdd:",
+  "branchPrefix": "oh-my-sdd",
+  "approval": "write",
+  "openDraftPR": true,
+  "provider": "github",
+  "templates": {
+    ".github/workflows/oh-my-sdd.yml": "7b52d52ada4a53e77733b28d82dd5a4a66484197c5d553344d9212028fba0810"
+  }
+}
