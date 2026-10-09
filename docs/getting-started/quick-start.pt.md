@@ -46,6 +46,6 @@ Uma implementação em andamento também grava estado fino em `.oh-my-sdd/runtim
 
 ## Saiba mais
 
-- [Visão Geral da Arquitetura](../architecture/overview.md) — como as 6 skills se encaixam
+- [Visão Geral da Arquitetura](../architecture/overview.md) — como as 7 skills se encaixam
 - [Referência de Skills](../architecture/skills.md) — o que cada skill faz em detalhe
 - [Conceitos de SDD](../concepts/what-is-sdd.md) — a metodologia por trás de tudo

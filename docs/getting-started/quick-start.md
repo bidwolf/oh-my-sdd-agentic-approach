@@ -46,6 +46,6 @@ An active implementation also records fine-grained state in `.oh-my-sdd/runtime/
 
 ## Learn more
 
-- [Architecture Overview](../architecture/overview.md) — how the 6 skills fit together
+- [Architecture Overview](../architecture/overview.md) — how the 7 skills fit together
 - [Skills Reference](../architecture/skills.md) — what each skill does in detail
 - [SDD Concepts](../concepts/what-is-sdd.md) — the methodology behind it all

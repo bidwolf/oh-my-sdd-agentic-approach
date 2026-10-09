@@ -2,7 +2,7 @@
 
 ![sdd-header](image.png)
 
-A set of global Claude Code skills that rigorously enforce **Spec-Driven Development (SDD)**: before implementing any task, Claude analyzes the project, generates `constitution.md` → `spec.md` → `plan.md` → `tasks.md`, with mandatory human validation before implementation is allowed to start.
+A set of global Claude Code skills that rigorously enforce **Spec-Driven Development (SDD)**: before implementing any task, Claude analyzes the project, generates `constitution.md` → `spec.md` → `plan.md` → `tasks.md`, with mandatory human validation before implementation is allowed to start — in the terminal, or driven from a GitHub/GitLab issue by a web agentic session (see [Ecosystem](#ecosystem-issues-githubgitlab)).
 
 📖 **Documentation:** [English](https://slpascoal.github.io/oh-my-sdd/) · [Português](https://slpascoal.github.io/oh-my-sdd/pt/)
 
@@ -12,20 +12,21 @@ A set of global Claude Code skills that rigorously enforce **Spec-Driven Develop
 npx oh-my-sdd install
 ```
 
-This installs the 6 skills globally in `~/.claude/skills/`, available in any project opened in Claude Code — installation does not depend on the directory the command is run from.
+This installs the 7 skills globally in `~/.claude/skills/`, available in any project opened in Claude Code — installation does not depend on the directory the command is run from.
 
 ## Architecture
 
-An orchestrator skill (`oh-my-sdd`) activates, in sequence, 5 specialized skills — one per SDD phase:
+An orchestrator skill (`oh-my-sdd`) activates, in sequence, 5 specialized skills — one per SDD phase — plus one channel adapter for the repository ecosystem:
 
 | Skill | Responsibility |
 |---|---|
-| `oh-my-sdd` | Orchestrates the flow, identifies the input (free text or Jira) and activates the others in order |
+| `oh-my-sdd` | Orchestrates the flow, identifies the input (free text, Jira, or a GitHub/GitLab issue) and activates the others in order |
 | `oh-my-sdd-constitution` | Founds the constitution on what the project already documents and practices: scans `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/`, `CONTRIBUTING.md`, lint configs and CI workflows first (every rule traced to its source, conflicts asked — never silently resolved), then falls back to code analysis, asking the user only what remains |
 | `oh-my-sdd-specify` | Generates `spec.md` in EARS/GEARS — **human checkpoint #1** |
 | `oh-my-sdd-plan` | Translates the validated spec into technical decisions (`plan.md`) |
 | `oh-my-sdd-tasks` | Breaks the plan into atomic tasks (`tasks.md`) — **human checkpoint #2** |
 | `oh-my-sdd-implement` | Implements task by task, only after both checkpoints are confirmed |
+| `oh-my-sdd-ecosystem` | Channel adapter, not a pipeline phase: resolves issue references, classifies an agent mention, enforces approval by repository permission, and publishes checkpoints as branch + draft PR/MR + comment + phase label |
 
 Each installed skill is self-contained: it gets its own copy of [`knowledge/`](./knowledge), the SDD knowledge base (maturity levels, EARS/GEARS syntax, artifact hierarchy, practical examples) that underpins how each phase generates its document.
 
@@ -37,13 +38,15 @@ Once installed, the flow is automatically discovered by Claude Code whenever a t
 /oh-my-sdd "add a logout endpoint that invalidates the refresh token"
 /oh-my-sdd PROJ-123
 /oh-my-sdd https://company.atlassian.net/browse/PROJ-123
+/oh-my-sdd https://github.com/org/repo/issues/42      # spec bound to the issue (issue.json)
+/oh-my-sdd org/repo#42
 ```
 
 ## Other commands
 
 ```bash
-npx oh-my-sdd status      # shows which of the 6 skills are installed and whether any file was manually modified
-npx oh-my-sdd uninstall   # removes the 6 skills from ~/.claude/skills/
+npx oh-my-sdd status      # shows which of the 7 skills are installed and whether any file was manually modified
+npx oh-my-sdd uninstall   # removes the 7 skills from ~/.claude/skills/
 ```
 
 ## Adaptive scale
@@ -76,11 +79,11 @@ Marked-section tools get idempotent merge between `<!-- oh-my-sdd:start|end -->`
 
 ## Feature report
 
-Portfolio view of every SDD feature in the current project — slug, current phase, task progress and pending acceptance criteria:
+Portfolio view of every SDD feature in the current project — slug, current phase, task progress, linked issue and pending acceptance criteria:
 
 ```bash
 npx oh-my-sdd report          # human table
-npx oh-my-sdd report --json   # stable machine schema ([{slug, phase, tasks_done, tasks_total, pending_criteria}])
+npx oh-my-sdd report --json   # stable machine schema ([{slug, phase, tasks_done, tasks_total, pending_criteria, issue}])
 ```
 
 Phase derivation: active session > task checkboxes > artifact presence (`specify` → `plan` → `tasks` → `implement` → `done`). Read-only; the oh-my-sdd repo itself is the first user (dogfooding).
@@ -96,14 +99,34 @@ npx oh-my-sdd hook uninstall        # removes only oh-my-sdd entries
 
 When a session starts with an implementation in progress, you get a one-line resume hint (`feature X, N/M tasks — resume with /oh-my-sdd-implement <slug>`); when a response ends with an active workflow, a short next-step reminder. Fully informative: hooks are fail-silent (exit 0, never block), read only `.oh-my-sdd/runtime/`, and merge into `.claude/settings.json` without touching third-party hooks.
 
+## Ecosystem: issues (GitHub/GitLab)
+
+The same pipeline can run from a web agentic session around an **issue**: the issue is the source of intent and the conversation channel, the repository stays the single source of truth for artifacts, and both human checkpoints become comments on the issue — still blocking.
+
+```bash
+npx oh-my-sdd ecosystem init github   # .github/workflows/oh-my-sdd.yml (claude-code-action) + .oh-my-sdd/config/ecosystem.json
+npx oh-my-sdd ecosystem init gitlab   # .gitlab/oh-my-sdd.gitlab-ci.yml + webhook → pipeline-trigger instructions
+```
+
+Four entry points:
+
+- **Direct reference** — `/oh-my-sdd <issue url | owner/repo#n | #n>` in the terminal: checkpoints stay in the chat; the spec is bound to the issue (`specs/<slug>/issue.json` + an `Issue:` line). Mentioning the same issue again resumes the same slug.
+- **Mention in the repo** — `@claude` (configurable handle) in an issue/PR comment, or the `sdd:specify` label: CI runs the orchestrator in **issue channel**. The spec lands on branch `oh-my-sdd/<slug>` with a draft PR/MR, one comment asks for validation, and a phase label (`sdd:spec-pending` → `sdd:spec-approved` → `sdd:tasks-pending` → `sdd:implementing` → `sdd:done`) shows the state.
+- **Conversational generation** — an issue without enough intent gets at most 5 questions in one comment before any spec is written; an empty issue never produces a spec.
+- **Reverse link** — a spec validated in the terminal can, on explicit opt-in, create or link an issue.
+
+Approval (`/oh-my-sdd approve spec|tasks`, or the approval label) only counts from users with **write permission** on the repository; everyone else's comments are input. Issue bodies and comments are treated as data, never instructions — requests to skip checkpoints, write outside `.oh-my-sdd/`, add dependencies or lower the scale are ignored and listed in the next checkpoint comment.
+
+The npm package makes **no network calls**: every GitHub/GitLab interaction is done by the host agent through tools it already has (GitHub/GitLab MCP, `gh`, `glab`). Templates reference secrets by name only; `ecosystem init` asks before writing outside `.oh-my-sdd/` (`--yes` skips) and never overwrites a manually edited template without `--force`. Details: [Ecosystem docs](https://slpascoal.github.io/oh-my-sdd/ecosystem/).
+
 ## Project layout
 
 Everything oh-my-sdd writes lives under `.oh-my-sdd/` in the target project:
 
 | Path | Versioned | Content |
 |---|---|---|
-| `specs/<slug>/` | yes | `spec.md`, `plan.md`, `tasks.md` — the SDD artifacts |
-| `config/` | yes | `sensors.json`, future behavior flags |
+| `specs/<slug>/` | yes | `spec.md`, `plan.md`, `tasks.md` — the SDD artifacts; `issue.json` when bound to an issue |
+| `config/` | yes | `sensors.json`, `ecosystem.json`, behavior flags |
 | `runtime/` (gitignored) | no | execution state: `sessions/`, sensor evidence, `scale.json` |
 
 Execution state is never committed. The orchestrator ensures `.oh-my-sdd/runtime/` is in `.gitignore` on first use; during implementation, a `sessions/<slug>.json` tracks fine-grained progress (current task, timestamps) so an interrupted run resumes where it stopped — `tasks.md` checkboxes remain the formal source of truth, and the session is archived when the feature closes.

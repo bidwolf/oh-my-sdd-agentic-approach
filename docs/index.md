@@ -1,6 +1,6 @@
 # oh-my-sdd
 
-**Spec-Driven Development, enforced by a global orchestrator + 5 Claude Code skills.**
+**Spec-Driven Development, enforced by a global orchestrator + 6 Claude Code skills.**
 
 `oh-my-sdd` installs a set of [Claude Code](https://claude.com/claude-code) skills that make **Spec-Driven Development (SDD)** the default way work gets done. Before any line of implementation code is written, Claude analyzes your project, generates a `constitution.md`, then a `spec.md`, a `plan.md`, and a `tasks.md` — stopping twice for your explicit approval before it ever touches your codebase.
 
@@ -10,7 +10,7 @@
 npx oh-my-sdd install
 ```
 
-This installs 6 skills globally into `~/.claude/skills/`, available in every project you open in Claude Code — no per-project setup required.
+This installs 7 skills globally into `~/.claude/skills/`, available in every project you open in Claude Code — no per-project setup required.
 
 ## Why oh-my-sdd
 

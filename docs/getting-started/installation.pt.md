@@ -13,7 +13,7 @@ npx oh-my-sdd install
 
 Esta é uma **instalação global de fato** — sempre escreve em `~/.claude/skills/`, independente do diretório em que você rodar o comando. Você só precisa rodar isso uma vez por máquina.
 
-Rodar o comando instala 6 skills:
+Rodar o comando instala 7 skills:
 
 | Skill | Pasta |
 |---|---|
@@ -23,6 +23,7 @@ Rodar o comando instala 6 skills:
 | `oh-my-sdd-plan` | `~/.claude/skills/oh-my-sdd-plan/` |
 | `oh-my-sdd-tasks` | `~/.claude/skills/oh-my-sdd-tasks/` |
 | `oh-my-sdd-implement` | `~/.claude/skills/oh-my-sdd-implement/` |
+| `oh-my-sdd-ecosystem` | `~/.claude/skills/oh-my-sdd-ecosystem/` |
 
 Cada pasta também recebe sua própria cópia da [base de conhecimento sobre SDD](../concepts/what-is-sdd.md), então cada skill é autocontida.
 
@@ -34,7 +35,7 @@ Se as skills já estiverem instaladas, a CLI pergunta se você quer reinstalar/a
 npx oh-my-sdd status
 ```
 
-Isso reporta quais das 6 skills estão presentes, e se algum arquivo instalado foi modificado manualmente desde a instalação (usando um manifest SHA-256 salvo em `~/.claude/skills/.oh-my-sdd-manifest.json`).
+Isso reporta quais das 7 skills estão presentes, e se algum arquivo instalado foi modificado manualmente desde a instalação (usando um manifest SHA-256 salvo em `~/.claude/skills/.oh-my-sdd-manifest.json`).
 
 ## Desinstalar
 
@@ -42,7 +43,7 @@ Isso reporta quais das 6 skills estão presentes, e se algum arquivo instalado f
 npx oh-my-sdd uninstall
 ```
 
-Remove as 6 pastas de skill e o arquivo de manifest. Nada mais na sua máquina é afetado — veja [Segurança e Dados](../safety.md).
+Remove as 7 pastas de skill e o arquivo de manifest. Nada mais na sua máquina é afetado — veja [Segurança e Dados](../safety.md).
 
 ## Opcional: hooks de sessão
 

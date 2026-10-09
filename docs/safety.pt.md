@@ -4,7 +4,7 @@ O `oh-my-sdd` é intencionalmente restrito quanto ao que toca. Antes de instalar
 
 ## O que o instalador toca
 
-- **`~/.claude/skills/oh-my-sdd*/`** — as 6 pastas de skill que ele instala, mais `~/.claude/skills/.oh-my-sdd-manifest.json` (um manifest de integridade). Nada mais em `~/.claude/skills/` é modificado.
+- **`~/.claude/skills/oh-my-sdd*/`** — as 7 pastas de skill que ele instala, mais `~/.claude/skills/.oh-my-sdd-manifest.json` (um manifest de integridade). Nada mais em `~/.claude/skills/` é modificado.
 - E é só isso. O instalador nunca toca no seu `~/.claude/CLAUDE.md` global, no `CLAUDE.md` do seu projeto, ou em qualquer outra configuração do Claude Code.
 
 ## O que as skills tocam, quando você roda uma tarefa
@@ -30,6 +30,6 @@ Nenhum código de implementação é escrito antes da confirmação do checkpoin
 npx oh-my-sdd uninstall
 ```
 
-remove todos os arquivos que o instalador criou. Nada fica para trás fora das 6 pastas de skill e do manifest.
+remove todos os arquivos que o instalador criou. Nada fica para trás fora das 7 pastas de skill e do manifest.
 
 Como as specs e a constitution vivem dentro do seu projeto em `.oh-my-sdd/`, elas são arquivos comuns sob seu próprio controle de versão — delete a pasta, ou faça `git revert`, e você volta ao ponto de partida.
