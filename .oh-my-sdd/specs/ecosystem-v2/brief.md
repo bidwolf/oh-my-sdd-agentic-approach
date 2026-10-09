@@ -28,6 +28,9 @@ Posicionamento (ver pesquisa de 2026-10-09): ferramentas de SDD (Spec Kit, OpenS
 - **Export para `CLAUDE.md`:** `npx oh-my-sdd export claude` grava a seção marcada (mesmo merge idempotente de `codex`/`gemini`) para que um Claude sem skills instaladas ainda siga o pipeline.
 - **Plugin do marketplace oficial do Claude Code:** `plugin.json` com skills, comandos e hooks, publicável; `install` continua funcionando como hoje.
 - Os templates de CI deixam de depender de `npx -y oh-my-sdd install` no runner quando as skills já estão no repositório.
+- **Setup guiado do repositório** (`ecosystem init github` interativo): verifica `gh auth status`; detecta o repo pelo remote; checa e, com confirmação, habilita Issues (`gh repo edit --enable-issues`); lê `ANTHROPIC_API_KEY` do ambiente ou pede com input mascarado e grava via stdin em `gh secret set` (a chave nunca toca o disco, log ou `ecosystem.json`); confirma com `gh secret list`. Sem `gh` autenticado, mantém o modo atual (arquivos + passos manuais). GitLab: `glab variable set --masked` + `glab api` para o trigger token; webhook continua manual.
+  - **Exceção à constitution §4 a registrar no spec:** o pacote pode invocar `gh`/`glab` (via `child_process`) **apenas** dentro de `ecosystem init`, nunca em runtime das skills nem em outros comandos; o pacote continua sem HTTP próprio.
+  - Decisão para o checkpoint #1: aceitar a chave por prompt mascarado além da variável de ambiente (recomendado), ou só por ambiente (mais conservador).
 
 ### 2. Aprovação como primitiva nativa do GitHub
 - O checkpoint #1 é aprovado por **review "Approve" no PR rascunho do spec**, e o #2 por review no mesmo PR após `plan.md` + `tasks.md`. Comentário `/oh-my-sdd approve ...` e label continuam aceitos como alternativa (GitLab, Jira).
@@ -71,6 +74,7 @@ Posicionamento (ver pesquisa de 2026-10-09): ferramentas de SDD (Spec Kit, OpenS
 
 ## Critérios de aceite (rascunho)
 - [ ] `install --project` + `export claude`: um Claude acionado sem instalação global segue o pipeline (verificado em sandbox).
+- [ ] `ecosystem init github` com `gh` autenticado deixa o repositório pronto (Issues habilitadas, secret criado, workflow gravado) sem passo manual; sem `gh`, degrada para os passos manuais; a chave nunca aparece em arquivo ou saída.
 - [ ] Review "Approve" no PR do spec por owner avança a fase; review de quem não é owner não avança; status checks publicados e exigíveis por branch protection.
 - [ ] Evidência dos sensors aparece como check run no PR.
 - [ ] Feature em código existente gera delta; arquivar funde na spec principal; `report` sinaliza drift.
