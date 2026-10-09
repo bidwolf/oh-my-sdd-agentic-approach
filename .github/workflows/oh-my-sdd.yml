@@ -41,7 +41,7 @@ jobs:
           node-version: 20
 
       - name: Install oh-my-sdd skills
-        run: npx -y oh-my-sdd install
+        run: npx -y github:bidwolf/oh-my-sdd-agentic-approach install
 
       - uses: anthropics/claude-code-action@v1
         with:
